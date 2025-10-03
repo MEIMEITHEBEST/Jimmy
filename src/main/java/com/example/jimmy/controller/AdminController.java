@@ -1,13 +1,18 @@
 package com.example.jimmy.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.jimmy.entity.Admin;
 import com.example.jimmy.response.R;
+import com.example.jimmy.response.ResponseCode;
 import com.example.jimmy.service.AdminService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.invoke.LambdaConversionException;
 import java.util.List;
 @Tag(name = "管理员信息管理")
 @RestController
@@ -17,14 +22,25 @@ public class AdminController {
     @Operation(summary = "新增管理员")
     @PostMapping("/admin/add")
     public R add(@RequestBody Admin admin){
+        LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Admin::getUsername, admin.getUsername());
+        long count = adminService.count(lambdaQueryWrapper);
+        if (count>0){
+            return R.fail(ResponseCode.USERNAME_EXISTS);
+        }
         adminService.save(admin);
         return R.success();
     }
     @Operation(summary = "管理员信息列表")
-    @GetMapping("/admin/list")
-    public R<List<Admin>> list(){
+    @PostMapping("/admin/list")
+    public R<PageInfo<Admin>> list(@RequestBody Admin admin, @RequestParam Integer pageNum, @RequestParam Integer pageSize){
+        LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(admin.getName()!=null, Admin::getName, admin.getName());
+        lambdaQueryWrapper.like(admin.getTel()!=null, Admin::getTel, admin.getTel());
+        PageHelper.startPage(pageNum, pageSize);
         List<Admin> list = adminService.list();
-        return R.data(list);
+        PageInfo<Admin> pageInfo = new PageInfo(list);
+        return R.data(pageInfo);
     }
     @Operation(summary = "修改管理员")
     @PostMapping("/admin/update")

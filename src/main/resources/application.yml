@@ -34,3 +34,8 @@ knife4j:
   setting:
     language: zh_cn
     swagger-model-name: 实体类列表
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.example.jimmy.entity
