@@ -21,6 +21,7 @@ public class AdminController {
     private AdminService adminService;
     @Operation(summary = "新增管理员")
     @PostMapping("/admin/add")
+    @CrossOrigin
     public R add(@RequestBody Admin admin){
         LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Admin::getUsername, admin.getUsername());
@@ -33,6 +34,7 @@ public class AdminController {
     }
     @Operation(summary = "管理员信息列表")
     @PostMapping("/admin/list")
+    @CrossOrigin
     public R<PageInfo<Admin>> list(@RequestBody Admin admin, @RequestParam Integer pageNum, @RequestParam Integer pageSize){
         LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.like(admin.getName()!=null, Admin::getName, admin.getName());
@@ -44,12 +46,14 @@ public class AdminController {
     }
     @Operation(summary = "修改管理员")
     @PostMapping("/admin/update")
+    @CrossOrigin
     public R update(@RequestBody Admin admin){
         adminService.updateById(admin);
         return R.success();
     }
     @Operation(summary = "删除管理员")
     @PostMapping("/admin/del")
+    @CrossOrigin
     public R del(@RequestParam Long id){
         adminService.removeById(id);
         return R.success();
