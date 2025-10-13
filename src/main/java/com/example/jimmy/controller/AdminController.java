@@ -36,12 +36,13 @@ public class AdminController {
     @PostMapping("/admin/list")
     @CrossOrigin
     public R<PageInfo<Admin>> list(@RequestBody Admin admin, @RequestParam Integer pageNum, @RequestParam Integer pageSize){
-        LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(admin.getName()!=null, Admin::getName, admin.getName());
-        lambdaQueryWrapper.like(admin.getTel()!=null, Admin::getTel, admin.getTel());
         PageHelper.startPage(pageNum, pageSize);
-        List<Admin> list = adminService.list();
-        PageInfo<Admin> pageInfo = new PageInfo(list);
+        LambdaQueryWrapper<Admin> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(admin.getName() != null, Admin::getName, admin.getName());
+        lambdaQueryWrapper.like(admin.getTel() != null, Admin::getTel, admin.getTel());
+        lambdaQueryWrapper.orderByDesc(Admin::getId);
+        List<Admin> list = adminService.list(lambdaQueryWrapper);
+        PageInfo<Admin> pageInfo = new PageInfo<>(list);
         return R.data(pageInfo);
     }
     @Operation(summary = "修改管理员")
@@ -54,8 +55,8 @@ public class AdminController {
     @Operation(summary = "删除管理员")
     @PostMapping("/admin/del")
     @CrossOrigin
-    public R del(@RequestParam Long id){
-        adminService.removeById(id);
+    public R del(@RequestParam List<Long> ids){
+        adminService.removeByIds(ids);
         return R.success();
     }
 }

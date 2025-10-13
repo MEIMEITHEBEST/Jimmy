@@ -9,8 +9,8 @@ export const adminApi = {
         return post('/admin/update', param);
     },
     // 删除管理员信息
-    delete: (id:any) => {
-        return post('/admin/delete?id=' + id,{});
+    delete: (ids:any) => {
+        return post('/admin/del?ids=' + ids,{});
     },
 
     // 分页查询管理员信息列表
